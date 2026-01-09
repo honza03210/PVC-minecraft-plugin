@@ -57,6 +57,7 @@ public class MCWebSocketServer extends WebSocketServer {
         try {
             if (!positions_map.containsKey(obj.get("token").getAsString())){
                 conn.send("#InvalidToken");
+
             }
             // mby catch the old value and notify the previous receiver?
             active_feeds.put(obj.get("token").getAsString(), conn);

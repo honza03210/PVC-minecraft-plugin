@@ -1,0 +1,87 @@
+package org.honza03210.proximityvc;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class Proximity_vc extends JavaPlugin implements Listener {
+    String SERVER_NAME = "SomeRandomServer";
+    String WEBSOCKET_ADDRESS = "http://localhost";
+    String VOICE_CHAT_WEBSITE = "https://jaguar-magnetic-deer.ngrok-free.app";
+    int WEBSOCKET_PORT = 8080;
+    private MCWebSocketServer WSServer;
+    @Override
+    public void onEnable() {
+        // Register events
+        getServer().getPluginManager().registerEvents(this, this);
+        getLogger().info("onEnable is called!");
+
+        // Stop old server if exists -- on reload
+        if (WSServer != null) {
+            WSServer.stopServer();
+            WSServer = null;
+        }
+
+        WSServer = new MCWebSocketServer(WEBSOCKET_PORT);
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            WSServer.start();
+        });
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    if (!WSServer.active_feeds.containsKey(player.getName())){
+                        return;
+                    }
+                    WSServer.positions_map.put(player.getName(), getPlayerPos(player));
+                    getLogger().info("Updated " + player.getName() + " positions");
+                });
+                WSServer.SendPositions();
+
+                getLogger().info("Positions sent");
+            });
+        }, 0L, 5L);
+    }
+
+    @Override
+    public void onDisable() {
+        WSServer.stopServer();
+        // Plugin shutdown logic
+    }
+
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        //player.sendMessage(String.format("https://jaguar-magnetic-deer.ngrok-free.app/?username=%s&room=%s&websocket_address=%s:%d&user_token=%s", player.getName(), SERVER_NAME, WEBSOCKET_ADDRESS, WEBSOCKET_PORT, player.getName()));
+        WSServer.positions_map.put(player.getName(), getPlayerPos(player));
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        WSServer.last_positions_map.remove(event.getPlayer().getName());
+        WSServer.positions_map.remove(event.getPlayer().getName());
+        WSServer.active_feeds.remove(event.getPlayer().getName());
+    }
+
+    float[] getPlayerPos(Player player){
+        return new float[]{(float) player.getLocation().getX(), (float) player.getLocation().getY(), (float) player.getLocation().getZ(), player.getLocation().getPitch(), player.getLocation().getYaw()};
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (!command.getName().equalsIgnoreCase("pvc")) return false;
+
+        sender.sendMessage(String.format("%s/?username=%s&room=%s&websocket_address=%s:%d&user_token=%s", VOICE_CHAT_WEBSITE, sender.getName(), SERVER_NAME, WEBSOCKET_ADDRESS, WEBSOCKET_PORT, sender.getName()));
+
+        return true;
+
+    }
+
+}

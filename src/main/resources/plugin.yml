@@ -1,0 +1,10 @@
+name: proximity-vc
+version: '${project.version}'
+main: org.honza03210.proximityvc.Proximity_vc
+api-version: '1.21'
+
+
+commands:
+  pvc:
+    description: Proximity VC plugin command
+    usage: /pvc <subcommand>
