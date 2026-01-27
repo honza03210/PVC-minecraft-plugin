@@ -31,10 +31,13 @@ public final class Proximity_vc extends JavaPlugin implements Listener {
             WSServer = null;
         }
 
+        // starting the websocket server
         WSServer = new MCWebSocketServer(WEBSOCKET_PORT);
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             WSServer.start();
         });
+
+        // updating the positions in the active_feeds object
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                 Bukkit.getOnlinePlayers().forEach(player -> {
@@ -62,6 +65,7 @@ public final class Proximity_vc extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         //player.sendMessage(String.format("https://jaguar-magnetic-deer.ngrok-free.app/?username=%s&room=%s&websocket_address=%s:%d&user_token=%s", player.getName(), SERVER_NAME, WEBSOCKET_ADDRESS, WEBSOCKET_PORT, player.getName()));
+        // should probably be rewritten and moved to onCommand
         WSServer.positions_map.put(player.getName(), getPlayerPos(player));
     }
 

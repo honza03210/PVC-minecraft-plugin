@@ -1,21 +1,23 @@
 package org.honza03210.proximityvc;
 // https://tootallnate.github.io/Java-WebSocket/
 
-import org.java_websocket.server.WebSocketServer;
-import org.java_websocket.WebSocket;
-import org.java_websocket.handshake.ClientHandshake;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.java_websocket.WebSocket;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class MCWebSocketServer extends WebSocketServer {
+    // the minecraft side of the plugin stores the most recent player positions here
     public Map<String, float[]> positions_map = new HashMap<>();
+    // last minecraft position stored - no need to send it
     public Map<String, float[]> last_positions_map = new HashMap<>();
+    // the current websocket connection for each player
     public Map<String, WebSocket> active_feeds = new HashMap<>();
 
     public MCWebSocketServer(int port) {
@@ -52,10 +54,10 @@ public class MCWebSocketServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, String message) {
         System.out.println("Received: " + message);
-        conn.send("Echo: " + message);
+        //conn.send("Echo: " + message);
         JsonObject obj = JsonParser.parseString(message).getAsJsonObject();
         try {
-            if (!positions_map.containsKey(obj.get("token").getAsString())){
+            if (!positions_map.containsKey(obj.get("token").getAsString())) {
                 conn.send("#InvalidToken");
 
             }
@@ -66,11 +68,12 @@ public class MCWebSocketServer extends WebSocketServer {
         }
     }
 
-    public void SendPositions(){
+    public void SendPositions() {
+        // sending position to each of the connected users
         active_feeds.forEach((token, conn) -> {
-            try{
+            try {
                 float[] pos = positions_map.get(token);
-                if (Arrays.equals(pos, last_positions_map.get(token))){
+                if (Arrays.equals(pos, last_positions_map.get(token))) {
                     return;
                 }
                 StringBuilder sb = new StringBuilder();
