@@ -9,4 +9,5 @@ Put the compiled .jar into the MINECRAFT_SERVER/plugins/ directory, it will then
 
 
 This is the compilation IdeaJ does by default
-/bin/sh MAVEN_PATH/maven/lib/maven3/bin/mvn -Didea.version=2025.2.3 -Dmaven.ext.class.path=MAVEN_PATHmaven/lib/maven-event-listener.jar -Djansi.passthrough=true -Dstyle.color=always -Dmaven.repo.local=~/.m2/repository package
+
+```/bin/sh MAVEN_PATH/maven/lib/maven3/bin/mvn -Didea.version=2025.2.3 -Dmaven.ext.class.path=MAVEN_PATHmaven/lib/maven-event-listener.jar -Djansi.passthrough=true -Dstyle.color=always -Dmaven.repo.local=~/.m2/repository package```
