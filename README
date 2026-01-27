@@ -1,3 +1,4 @@
+#PVC Minecraft plugin
 Minecraft plugin for use with https://github.com/honza03210/p2p-voice-chat
 Works by hosting a Websocket server. When the player types the voice chat command (/pvc by default) a link gets generated allowing the user to connect to the voice chat in the browser.
 The player positions are then fed from the Minecraft Websocket server to the browser client and then exchanged with other peers in the call -> spatial (and proximity) audio reconstructed upon receiving the peers positions and voice data.
