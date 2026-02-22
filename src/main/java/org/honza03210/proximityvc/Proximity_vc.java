@@ -14,8 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Proximity_vc extends JavaPlugin implements Listener {
     String SERVER_NAME = "SomeRandomServer";
-    String WEBSOCKET_ADDRESS = "http://localhost";
-    String VOICE_CHAT_WEBSITE = "https://jaguar-magnetic-deer.ngrok-free.app";
+    String WEBSOCKET_ADDRESS = "https://mc.yappr.cz";
+    String VOICE_CHAT_WEBSITE = "https://yappr.cz";
     String ROOM_PASSWORD = "Password";
     int WEBSOCKET_PORT = 8080;
     private MCWebSocketServer WSServer;
